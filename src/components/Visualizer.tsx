@@ -7,7 +7,7 @@ const Visualizer: React.FC = ({array}) => {
 
   return (
     <div>
-      <ul>
+      <ul className='flex items-center justify-between'>
         {array.map((item, index) => (
           <li key={index}>{item}</li>
         ))}
