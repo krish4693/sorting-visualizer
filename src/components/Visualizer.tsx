@@ -7,9 +7,9 @@ const Visualizer: React.FC = ({array}) => {
 
   return (
     <div>
-      <ul className='flex items-center justify-between'>
+      <ul className='flex items-center justify-center gap-3'>
         {array.map((item, index) => (
-          <li key={index}>{item}</li>
+          <li key={index} className='bg-red-200'>{item}</li>
         ))}
       </ul>
     </div>
