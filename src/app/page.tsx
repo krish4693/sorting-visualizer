@@ -5,7 +5,6 @@ import Visualizer from "@/components/Visualizer";
 export default function Home() {
   return (
     <main className="">
-      <Navbar></Navbar>
       <Visualizer/>
 
     </main>
