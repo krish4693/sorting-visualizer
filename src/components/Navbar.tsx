@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const Navbar = ({ generateNewArray, handleMergeSort }) => {
+const Navbar = ({ generateNewArray, handleMergeSort,handleBubbleSort }) => {
   return (
     <div className='flex items-center justify-around'>
       <button onClick={generateNewArray}>
@@ -11,7 +11,10 @@ const Navbar = ({ generateNewArray, handleMergeSort }) => {
       <button onClick={handleMergeSort}>
         <p>Merge Sort</p>
       </button>
-      <p>Sort</p>
+      <button onClick={handleBubbleSort}>
+      <p>Bubble Sort</p>
+
+      </button>
     </div>
   );
 };
