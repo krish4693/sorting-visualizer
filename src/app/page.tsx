@@ -9,8 +9,8 @@ export default function Home() {
 
 
   const generateRandomArray = (size: number): number[] => {
-    // Generate an array of random integers between 1 and 100 (adjust as needed)
-    return Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 1);
+    // Generate an array of random integers between 1 and 90 (adjust as needed)
+    return Array.from({ length: size }, () => Math.floor(Math.random() * 90) + 4);
   };
   
   useEffect(() =>{
