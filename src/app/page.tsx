@@ -21,6 +21,11 @@ export default function Home() {
     setArray(newArray)
   },[]);
 
+  const updateArray =(array:number[])=>{
+    const newArray=[...array]
+    setArray(newArray)
+  }
+
   const generateNewArray = () => {
     const newArray = generateRandomArray(10)
     setArray(newArray)
@@ -69,7 +74,7 @@ export default function Home() {
                 array[j + 1] = temp;
             }
             console.log("on top of sleep function")
-  
+            updateArray(array)
             await sleep(delay)
         }
     }
@@ -81,7 +86,7 @@ export default function Home() {
   }
 
   const handleBubbleSort =() => {
-    bubbleSort([...array], 100)
+    bubbleSort([...array], 1000)
     .then((newArray) => {
       // Update the state with the resolved array
       setArray(newArray);
