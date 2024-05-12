@@ -27,7 +27,7 @@ export default function Home() {
   }
 
 
-  function merge(left, right) {
+  function merge(left:number[], right:number[]) {
     let arr = [];
     while (left.length && right.length) {
         if (left[0] < right[0]) {
@@ -40,7 +40,7 @@ export default function Home() {
     return [...arr, ...left, ...right];
 }
 
-  function mergeSort(array) {
+  function mergeSort(array:number[]):any[] {
     if (array.length <= 1) {
         return array; // Base case: already sorted or empty array
     }
@@ -60,7 +60,7 @@ export default function Home() {
     setArray(newArray)
   }
 
-  function bubbleSort(array: number[]): number[] {
+  async function bubbleSort(array: number[],delay:number): Promise<number[]> {
     for (let i = 0; i < array.length; i++) {
         for (let j = 0; j < array.length - i - 1; j++) {
             if (array[j] > array[j + 1]) {
@@ -68,16 +68,28 @@ export default function Home() {
                 array[j] = array[j + 1];
                 array[j + 1] = temp;
             }
+            console.log("on top of sleep function")
+  
+            await sleep(delay)
         }
     }
     return array;
   }
 
+  function sleep(ms:number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const handleBubbleSort =() => {
-    const newArray=bubbleSort([...array])
-
-
-    setArray(newArray)
+    bubbleSort([...array], 100)
+    .then((newArray) => {
+      // Update the state with the resolved array
+      setArray(newArray);
+    })
+    .catch((error) => {
+      // Handle any errors (optional)
+      console.error('Error in bubbleSort:', error);
+    });
   }
 
   return (

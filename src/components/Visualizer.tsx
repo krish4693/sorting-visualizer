@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 
-const Visualizer: React.FC = ({array}) => {
+interface VisualizerProps {
+  array: number[];
+}
+
+const Visualizer: React.FC<VisualizerProps> = ({array}) => {
   
 
   return (
