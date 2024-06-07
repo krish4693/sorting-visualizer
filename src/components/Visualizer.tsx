@@ -1,23 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 interface VisualizerProps {
   array: number[];
+  index1: number;
+  index2: number;
 }
 
-const Visualizer: React.FC<VisualizerProps> = ({array}) => {
-  
-
+const Visualizer: React.FC<VisualizerProps> = ({ array, index1, index2 }) => {
   return (
     <div>
       <ul className='flex justify-center gap-3'>
         {array.map((item, index) => (
-          <li key={index} className='bg-red-200' style={{height:`${item*10}px`,width:'30px',display:'flex',justifyContent:'center'}}>{item}</li>
+          <li
+            key={index}
+            className={`flex justify-center items-end ${
+              index === index1 || index === index2 ? 'bg-blue-200' : 'bg-red-200'
+            }`}
+            style={{ height: `${item * 10}px`, width: '30px' }}
+          >
+            {item}
+          </li>
         ))}
       </ul>
     </div>
   );
-}
+};
 
 export default Visualizer;
