@@ -60,7 +60,7 @@ export default function Home() {
   const [index2, setIndex2] = useState<number | null>(null);
 
   useEffect(() => {
-    const newArray = generateRandomArray(10);
+    const newArray = generateRandomArray(10); // Initial array size
     setArray(newArray);
   }, []);
 
@@ -70,8 +70,8 @@ export default function Home() {
     setIndex2(idx2);
   };
 
-  const generateNewArray = () => {
-    const newArray = generateRandomArray(10);
+  const generateNewArray = (size: number) => {
+    const newArray = generateRandomArray(size);
     setArray(newArray);
     setIndex1(null);
     setIndex2(null);
@@ -98,7 +98,11 @@ export default function Home() {
 
   return (
     <main className="">
-      <Navbar generateNewArray={generateNewArray} handleMergeSort={handleMergeSort} handleBubbleSort={handleBubbleSort} />
+      <Navbar
+        generateNewArray={generateNewArray}
+        handleMergeSort={handleMergeSort}
+        handleBubbleSort={handleBubbleSort}
+      />
       <Visualizer array={array} index1={index1} index2={index2} />
     </main>
   );
