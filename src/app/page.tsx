@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Visualizer from "@/components/Visualizer";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { isContext } from "vm";
 
 const generateRandomArray = (size: number): number[] => {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 87) + 4);
@@ -40,12 +41,16 @@ const sleep = (ms: number) => {
 const bubbleSort = async (
   array: number[],
   delay: number,
-  updateArray: (array: number[], index1: number, index2: number) => void
+  updateArray: (array: number[], index1: number, index2: number) => void,
+  isCancelledRef: React.MutableRefObject<boolean>
 ): Promise<number[]> => {
   for (let i = 0; i < array.length; i++) {
     for (let j = 0; j < array.length - i - 1; j++) {
+      if (isCancelledRef.current) return array; // Check cancellation flag
+
       if (array[j] > array[j + 1]) {
         [array[j], array[j + 1]] = [array[j + 1], array[j]];
+
         updateArray([...array], j, j + 1);
         await sleep(delay);
       }
@@ -58,6 +63,7 @@ export default function Home() {
   const [array, setArray] = useState<number[]>([]);
   const [index1, setIndex1] = useState<number | null>(null);
   const [index2, setIndex2] = useState<number | null>(null);
+  const isCancelledRef = useRef<boolean>(false);
 
   useEffect(() => {
     const newArray = generateRandomArray(10); // Initial array size
@@ -71,13 +77,16 @@ export default function Home() {
   };
 
   const generateNewArray = (size: number) => {
+    isCancelledRef.current = true; // Cancel ongoing sort
     const newArray = generateRandomArray(size);
     setArray(newArray);
     setIndex1(null);
     setIndex2(null);
+    
   };
 
   const handleMergeSort = () => {
+    isCancelledRef.current = true; // Cancel ongoing sort
     const sortedArray = mergeSort([...array]);
     setArray(sortedArray);
     setIndex1(null);
@@ -85,7 +94,8 @@ export default function Home() {
   };
 
   const handleBubbleSort = () => {
-    bubbleSort([...array], 500, updateArray)
+    isCancelledRef.current = false; // Reset cancellation flag before starting bubble sort
+    bubbleSort([...array], 500, updateArray, isCancelledRef)
       .then((sortedArray) => {
         setArray(sortedArray);
         setIndex1(null);
