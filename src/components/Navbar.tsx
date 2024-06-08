@@ -1,10 +1,12 @@
 import React from 'react'
 import { Slider } from "@/components/ui/slider"
+import { useState } from 'react';
 
 const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort }) => {
+  const [currentValue,setCurrentValue]=useState<number>(10)
   return (
     <div className='flex items-center justify-around'>
-      <button onClick={() => generateNewArray(10)}>
+      <button onClick={() => generateNewArray(currentValue)}>
         <p>Generate New Array</p>
       </button>
       <p>Change Array Size</p>
@@ -13,7 +15,11 @@ const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort }) => {
         max={50}
         step={1}
         className='w-[30%]'
-        onValueChange={(newValue) => generateNewArray(newValue[0])}
+        onValueChange={(newValue) => {
+          setCurrentValue(newValue[0])
+          generateNewArray(newValue[0])
+
+        }}
       />
       <button onClick={handleMergeSort}>
         <p>Merge Sort</p>
