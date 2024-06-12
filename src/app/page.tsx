@@ -12,6 +12,7 @@ const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+//merge
 const merge = async (
   left: number[],
   right: number[],
@@ -21,7 +22,7 @@ const merge = async (
   array: number[],
   startIndex: number
 ): Promise<number[]> => {
-  let result: number[] = [];
+  let result: number[] = [];  
   let leftIndex = 0;
   let rightIndex = 0;
 
@@ -57,6 +58,8 @@ const merge = async (
   return result;
 };
 
+
+//merge sort
 const mergeSort = async (
   array: number[],
   delay: number,
@@ -109,6 +112,40 @@ const bubbleSort = async (
   return array;
 };
 
+const insertionSort = async (
+  array: number[],
+  delay: number,
+  updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
+  isCancelledRef: React.MutableRefObject<boolean>
+): Promise<number[]> => {
+  const sortedIndices = new Set<number>();
+
+  for (let i = 1; i < array.length; i++) {
+    let key = array[i];
+    let j = i - 1;
+
+    while (j >= 0 && array[j] > key) {
+      if (isCancelledRef.current) {
+        return array; // Check cancellation flag
+      }
+
+      array[j + 1] = array[j];
+      updateArray([...array], j, j + 1, sortedIndices);
+      await sleep(delay);
+      j = j - 1;
+    }
+    array[j + 1] = key;
+
+    // Mark the current element as sorted
+    sortedIndices.add(i);
+    updateArray([...array], null, null, sortedIndices);
+  }
+
+  // After sorting is complete, mark all elements as sorted
+  updateArray([...array], null, null, new Set(array.keys()));
+  return array;
+};
+
 export default function Home() {
   const [array, setArray] = useState<number[]>([]);
   const [index1, setIndex1] = useState<number | null>(null);
@@ -154,12 +191,19 @@ export default function Home() {
       });
   };
 
+  const handleInsertionSort = async () => {
+    isCancelledRef.current = false; // Reset cancellation flag before starting insertion sort
+    const sortedArray = await insertionSort([...array], 1000, updateArray, isCancelledRef);
+    updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+  };
+
   return (
     <main className="">
       <Navbar
         generateNewArray={generateNewArray}
         handleMergeSort={handleMergeSort}
         handleBubbleSort={handleBubbleSort}
+        handleInsertionSort={handleInsertionSort}
       />
       <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
     </main>

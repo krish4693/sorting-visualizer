@@ -2,7 +2,7 @@ import React from 'react'
 import { Slider } from "@/components/ui/slider"
 import { useState } from 'react';
 
-const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort }) => {
+const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInsertionSort }) => {
   const [currentValue,setCurrentValue]=useState<number>(10)
   return (
     <div className='flex items-center justify-around'>
@@ -26,6 +26,9 @@ const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort }) => {
       </button>
       <button onClick={handleBubbleSort}>
         <p>Bubble Sort</p>
+      </button>
+      <button onClick={handleInsertionSort}>
+        Insertion Sort
       </button>
     </div>
   );
