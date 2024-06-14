@@ -12,77 +12,65 @@ const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-//merge
-const merge = async (
-  left: number[],
-  right: number[],
+// In-place merge function
+const mergeInPlace = async (
+  array: number[],
+  leftStart: number,
+  leftEnd: number,
+  rightEnd: number,
   delay: number,
   updateArray: (array: number[], start: number | null , end: number | null , sortedIndices: Set<number>) => void,
-  isCancelledRef: React.MutableRefObject<boolean>,
-  array: number[],
-  startIndex: number
-): Promise<number[]> => {
-  let result: number[] = [];  
-  let leftIndex = 0;
-  let rightIndex = 0;
+  isCancelledRef: React.MutableRefObject<boolean>
+) => {
+  let left = leftStart;
+  let right = leftEnd + 1;
+  const sortedIndices = new Set<number>();
 
-  while (leftIndex < left.length && rightIndex < right.length) {
+  while (left <= leftEnd && right <= rightEnd) {
     if (isCancelledRef.current) {
-      return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex)); // Check cancellation flag
+      return; // Check cancellation flag
     }
 
-    if (left[leftIndex] < right[rightIndex]) {
-      result.push(left[leftIndex]);
-      leftIndex++;
+    if (array[left] <= array[right]) {
+      sortedIndices.add(left);
+      left++;
     } else {
-      result.push(right[rightIndex]);
-      rightIndex++;
+      const temp = array[right];
+      for (let k = right; k > left; k--) {
+        array[k] = array[k - 1];
+      }
+      array[left] = temp;
+
+      left++;
+      leftEnd++;
+      right++;
     }
 
-    // Call updateArray with the current state of the result and the indices involved
-    const newArray = [...array];
-    newArray.splice(startIndex, result.length, ...result);
-    updateArray(newArray, leftIndex, rightIndex, new Set(newArray.slice(0, startIndex + result.length).map((_, i) => i)));
+    updateArray([...array], left, right, sortedIndices);
     await sleep(delay);
   }
-
-  // Concatenate the remaining elements
-  result = result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-
-  // Final update after merging
-  const finalArray = [...array];
-  finalArray.splice(startIndex, result.length, ...result);
-  updateArray(finalArray, null, null, new Set(finalArray.slice(0, startIndex + result.length).map((_, i) => i)));
-  await sleep(delay);
-
-  return result;
 };
 
-
-//merge sort
-const mergeSort = async (
+// In-place merge sort
+const mergeSortInPlace = async (
   array: number[],
+  start: number,
+  end: number,
   delay: number,
   updateArray: (array: number[], start: number | null, end: number | null, sortedIndices: Set<number>) => void,
-  isCancelledRef: React.MutableRefObject<boolean>,
-  startIndex = 0
-): Promise<number[]> => {
-  if (array.length <= 1) {
-    return array;
+  isCancelledRef: React.MutableRefObject<boolean>
+) => {
+  if (start >= end) {
+    return;
   }
 
-  const pivot = Math.floor(array.length / 2);
-  const left = array.slice(0, pivot);
-  const right = array.slice(pivot);
+  const mid = Math.floor((start + end) / 2);
+  await mergeSortInPlace(array, start, mid, delay, updateArray, isCancelledRef);
+  await mergeSortInPlace(array, mid + 1, end, delay, updateArray, isCancelledRef);
+  await mergeInPlace(array, start, mid, end, delay, updateArray, isCancelledRef);
 
-  const sortedLeft = await mergeSort(left, delay, updateArray, isCancelledRef, startIndex);
-  const sortedRight = await mergeSort(right, delay, updateArray, isCancelledRef, startIndex + pivot);
-
-  const mergedArray = await merge(sortedLeft, sortedRight, delay, updateArray, isCancelledRef, array, startIndex);
-
-  // After merge is complete, mark the entire array as sorted
-  updateArray(mergedArray, null, null, new Set(mergedArray.keys()));
-  return mergedArray;
+  // After merge is complete, mark the sorted portion of the array
+  updateArray([...array], null, null, new Set(array.keys()));
 };
 
 const bubbleSort = async (
@@ -146,6 +134,42 @@ const insertionSort = async (
   return array;
 };
 
+const selectionSort = async (
+  array: number[],
+  delay: number,
+  updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
+  isCancelledRef: React.MutableRefObject<boolean>
+): Promise<number[]> => {
+  const sortedIndices = new Set<number>();
+
+  for (let i = 0; i < array.length - 1; i++) {
+    let minIndex = i;
+
+    for (let j = i + 1; j < array.length; j++) {
+      if (isCancelledRef.current) {
+        return array; // Check cancellation flag
+      }
+
+      if (array[j] < array[minIndex]) {
+        minIndex = j;
+      }
+      updateArray([...array], minIndex, j, sortedIndices);
+      await sleep(delay);
+    }
+
+    if (minIndex !== i) {
+      [array[i], array[minIndex]] = [array[minIndex], array[i]];
+      updateArray([...array], i, minIndex, sortedIndices);
+      await sleep(delay);
+    }
+    sortedIndices.add(i);
+  }
+
+  sortedIndices.add(array.length - 1);
+  updateArray([...array], null, null, sortedIndices);
+  return array;
+};
+
 export default function Home() {
   const [array, setArray] = useState<number[]>([]);
   const [index1, setIndex1] = useState<number | null>(null);
@@ -176,8 +200,9 @@ export default function Home() {
 
   const handleMergeSort = async () => {
     isCancelledRef.current = false; // Reset cancellation flag before starting merge sort
-    const sortedArray = await mergeSort([...array], 100, updateArray, isCancelledRef);
-    updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+    const newArray = [...array];
+    await mergeSortInPlace(newArray, 0, newArray.length - 1, 100, updateArray, isCancelledRef);
+    updateArray(newArray, null, null, new Set(newArray.keys()));
   };
 
   const handleBubbleSort = () => {
@@ -193,7 +218,13 @@ export default function Home() {
 
   const handleInsertionSort = async () => {
     isCancelledRef.current = false; // Reset cancellation flag before starting insertion sort
-    const sortedArray = await insertionSort([...array], 1000, updateArray, isCancelledRef);
+    const sortedArray = await insertionSort([...array], 50, updateArray, isCancelledRef);
+    updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+  };
+
+  const handleSelectionSort = async () => {
+    isCancelledRef.current = false; // Reset cancellation flag before starting selection sort
+    const sortedArray = await selectionSort([...array], 10, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
   };
 
@@ -204,6 +235,7 @@ export default function Home() {
         handleMergeSort={handleMergeSort}
         handleBubbleSort={handleBubbleSort}
         handleInsertionSort={handleInsertionSort}
+        handleSelectionSort={handleSelectionSort}
       />
       <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
     </main>
