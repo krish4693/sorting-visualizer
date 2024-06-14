@@ -5,11 +5,10 @@ import { useState } from 'react';
 const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInsertionSort,handleSelectionSort }) => {
   const [currentValue,setCurrentValue]=useState<number>(10)
   return (
-    <div className='flex items-center justify-around'>
-      <button onClick={() => generateNewArray(currentValue)}>
+    <div className='flex items-center justify-around h-11'>
+      <button onClick={() => generateNewArray(currentValue)} className='button'>
         <p>Generate New Array</p>
       </button>
-      <p>Change Array Size</p>
       <Slider
         defaultValue={[5]}
         max={50}
@@ -21,18 +20,19 @@ const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInse
 
         }}
       />
-      <button onClick={handleMergeSort}>
+      <button onClick={handleMergeSort} className='button'>
         <p>Merge Sort</p>
       </button>
-      <button onClick={handleBubbleSort}>
+      <button onClick={handleBubbleSort} className='button'>
         <p>Bubble Sort</p>
       </button>
-      <button onClick={handleInsertionSort}>
+      <button onClick={handleInsertionSort} className='button'>
         Insertion Sort
       </button>
-      <button onClick={handleSelectionSort}>
+      <button onClick={handleSelectionSort} className='button'>
         Selection Sort
       </button>
+
     </div>
   );
 };

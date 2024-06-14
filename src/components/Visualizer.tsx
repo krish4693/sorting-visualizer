@@ -21,7 +21,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ array, index1, index2, sortedIn
             }`}
             style={{ height: `${item * 10}px`, width: '30px' }}
           >
-            {item}
+            
           </li>
         ))}
       </ul>
