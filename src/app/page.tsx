@@ -3,6 +3,14 @@
 import Navbar from "@/components/Navbar";
 import Visualizer from "@/components/Visualizer";
 import { useEffect, useState, useRef } from "react";
+import { VT323 } from "next/font/google";
+
+
+const dottedmatrix = VT323({
+  subsets: ["latin"],
+  weight:['400' ],
+  
+})
 
 const generateRandomArray = (size: number): number[] => {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 87) + 4);
@@ -229,7 +237,7 @@ export default function Home() {
   };
 
   return (
-    <main className="">
+    <main className={dottedmatrix.className}>
       <Navbar
         generateNewArray={generateNewArray}
         handleMergeSort={handleMergeSort}
