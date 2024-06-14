@@ -1,9 +1,17 @@
-import React from 'react'
-import { Slider } from "@/components/ui/slider"
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Slider } from "@/components/ui/slider";
 
-const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInsertionSort,handleSelectionSort }) => {
-  const [currentValue,setCurrentValue]=useState<number>(10)
+interface NavbarProps {
+  generateNewArray: (value: number) => void;
+  handleMergeSort: () => void;
+  handleBubbleSort: () => void;
+  handleInsertionSort: () => void;
+  handleSelectionSort: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ generateNewArray, handleMergeSort, handleBubbleSort, handleInsertionSort, handleSelectionSort }) => {
+  const [currentValue, setCurrentValue] = useState<number>(10);
+
   return (
     <div className='flex items-center justify-around h-11'>
       <button onClick={() => generateNewArray(currentValue)} className='button'>
@@ -15,9 +23,8 @@ const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInse
         step={1}
         className='w-[30%]'
         onValueChange={(newValue) => {
-          setCurrentValue(newValue[0])
-          generateNewArray(newValue[0])
-
+          setCurrentValue(newValue[0]);
+          generateNewArray(newValue[0]);
         }}
       />
       <button onClick={handleMergeSort} className='button'>
@@ -32,7 +39,6 @@ const Navbar = ({ generateNewArray, handleMergeSort, handleBubbleSort,handleInse
       <button onClick={handleSelectionSort} className='button'>
         Selection Sort
       </button>
-
     </div>
   );
 };

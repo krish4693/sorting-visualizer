@@ -19,7 +19,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ array, index1, index2, sortedIn
             className={`flex justify-center items-end ${
               index === index1 || index === index2 ? 'bg-blue-200' : sortedIndices.has(index) ? 'bg-green-200' : 'bg-red-200'
             }`}
-            style={{ height: `${item * 10}px`, width: '30px' }}
+            style={{ height: `${item * 10}px`, width: '15px' }}
           >
             
           </li>

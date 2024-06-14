@@ -232,7 +232,7 @@ export default function Home() {
 
   const handleSelectionSort = async () => {
     isCancelledRef.current = false; // Reset cancellation flag before starting selection sort
-    const sortedArray = await selectionSort([...array], 10, updateArray, isCancelledRef);
+    const sortedArray = await selectionSort([...array], 25, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
   };
 
