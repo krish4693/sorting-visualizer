@@ -3,14 +3,12 @@
 import Navbar from "@/components/Navbar";
 import Visualizer from "@/components/Visualizer";
 import { useEffect, useState, useRef } from "react";
-import { VT323 } from "next/font/google";
+import { Inter } from "next/font/google";
 
-
-const dottedmatrix = VT323({
+const dottedmatrix = Inter({
   subsets: ["latin"],
-  weight:['400' ],
-  
-})
+  weight: ["400"],
+});
 
 const generateRandomArray = (size: number): number[] => {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 87) + 4);
@@ -27,12 +25,11 @@ const mergeInPlace = async (
   leftEnd: number,
   rightEnd: number,
   delay: number,
-  updateArray: (array: number[], start: number | null , end: number | null , sortedIndices: Set<number>) => void,
+  updateArray: (array: number[], start: number | null, end: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ) => {
   let left = leftStart;
   let right = leftEnd + 1;
-  const sortedIndices = new Set<number>();
 
   while (left <= leftEnd && right <= rightEnd) {
     if (isCancelledRef.current) {
@@ -40,7 +37,6 @@ const mergeInPlace = async (
     }
 
     if (array[left] <= array[right]) {
-      sortedIndices.add(left);
       left++;
     } else {
       const temp = array[right];
@@ -54,7 +50,7 @@ const mergeInPlace = async (
       right++;
     }
 
-    updateArray([...array], left, right, sortedIndices);
+    updateArray([...array], left, right, new Set());
     await sleep(delay);
   }
 };
@@ -78,7 +74,11 @@ const mergeSortInPlace = async (
   await mergeInPlace(array, start, mid, end, delay, updateArray, isCancelledRef);
 
   // After merge is complete, mark the sorted portion of the array
-  updateArray([...array], null, null, new Set(array.keys()));
+  if (start === 0 && end === array.length - 1) {
+    updateArray([...array], null, null, new Set(array.keys()));
+  } else {
+    updateArray([...array], null, null, new Set());
+  }
 };
 
 const bubbleSort = async (
