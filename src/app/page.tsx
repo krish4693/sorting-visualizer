@@ -183,6 +183,7 @@ export default function Home() {
   const [index1, setIndex1] = useState<number | null>(null);
   const [index2, setIndex2] = useState<number | null>(null);
   const [sortedIndices, setSortedIndices] = useState<Set<number>>(new Set());
+  const [isSorting, setIsSorting] = useState<boolean>(false);
   const isCancelledRef = useRef<boolean>(false);
 
   useEffect(() => {
@@ -198,6 +199,7 @@ export default function Home() {
   };
 
   const generateNewArray = (size: number) => {
+    if (isSorting) return; // Prevent generating new array during sorting
     isCancelledRef.current = true; // Cancel ongoing sort
     const newArray = generateRandomArray(size);
     setArray(newArray);
@@ -207,45 +209,53 @@ export default function Home() {
   };
 
   const handleMergeSort = async () => {
+    if (isSorting) return; // Prevent starting another sort
+    setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting merge sort
     const newArray = [...array];
-    await mergeSortInPlace(newArray, 0, newArray.length - 1, 100, updateArray, isCancelledRef);
+    await mergeSortInPlace(newArray, 0, newArray.length - 1, 10, updateArray, isCancelledRef);
     updateArray(newArray, null, null, new Set(newArray.keys()));
+    setIsSorting(false); // Reset sorting flag after completion
   };
 
-  const handleBubbleSort = () => {
+  const handleBubbleSort = async () => {
+    if (isSorting) return; // Prevent starting another sort
+    setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting bubble sort
-    bubbleSort([...array], 50, updateArray, isCancelledRef)
-      .then((sortedArray) => {
-        updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
-      })
-      .catch((error) => {
-        console.error("Error in bubbleSort:", error);
-      });
+    const sortedArray = await bubbleSort([...array], 10, updateArray, isCancelledRef);
+    updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+    setIsSorting(false); // Reset sorting flag after completion
   };
 
   const handleInsertionSort = async () => {
+    if (isSorting) return; // Prevent starting another sort
+    setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting insertion sort
     const sortedArray = await insertionSort([...array], 50, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+    setIsSorting(false); // Reset sorting flag after completion
   };
 
   const handleSelectionSort = async () => {
+    if (isSorting) return; // Prevent starting another sort
+    setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting selection sort
-    const sortedArray = await selectionSort([...array], 25, updateArray, isCancelledRef);
+    const sortedArray = await selectionSort([...array], 10, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
+    setIsSorting(false); // Reset sorting flag after completion
   };
 
   return (
-    <main className={dottedmatrix.className}>
+    <div className={dottedmatrix.className}>
       <Navbar
         generateNewArray={generateNewArray}
         handleMergeSort={handleMergeSort}
         handleBubbleSort={handleBubbleSort}
         handleInsertionSort={handleInsertionSort}
         handleSelectionSort={handleSelectionSort}
+        isSorting={isSorting} // Pass the sorting state to Navbar
       />
       <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
-    </main>
+    </div>
   );
 }
