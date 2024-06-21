@@ -185,9 +185,10 @@ export default function Home() {
   const [sortedIndices, setSortedIndices] = useState<Set<number>>(new Set());
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const isCancelledRef = useRef<boolean>(false);
+  const [delay, setDelay] = useState<number>(10);
 
   useEffect(() => {
-    const newArray = generateRandomArray(10); // Initial array size
+    const newArray = generateRandomArray(50); // Initial array size
     setArray(newArray);
   }, []);
 
@@ -213,7 +214,7 @@ export default function Home() {
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting merge sort
     const newArray = [...array];
-    await mergeSortInPlace(newArray, 0, newArray.length - 1, 10, updateArray, isCancelledRef);
+    await mergeSortInPlace(newArray, 0, newArray.length - 1, delay, updateArray, isCancelledRef);
     updateArray(newArray, null, null, new Set(newArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -222,7 +223,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting bubble sort
-    const sortedArray = await bubbleSort([...array], 10, updateArray, isCancelledRef);
+    const sortedArray = await bubbleSort([...array], delay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -231,7 +232,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting insertion sort
-    const sortedArray = await insertionSort([...array], 50, updateArray, isCancelledRef);
+    const sortedArray = await insertionSort([...array], delay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -240,7 +241,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting selection sort
-    const sortedArray = await selectionSort([...array], 10, updateArray, isCancelledRef);
+    const sortedArray = await selectionSort([...array], delay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -254,6 +255,8 @@ export default function Home() {
         handleInsertionSort={handleInsertionSort}
         handleSelectionSort={handleSelectionSort}
         isSorting={isSorting} // Pass the sorting state to Navbar
+        delay={delay}
+        setDelay={setDelay}
       />
       <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
     </div>

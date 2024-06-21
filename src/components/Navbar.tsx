@@ -9,6 +9,9 @@ interface NavbarProps {
   handleInsertionSort: () => void;
   handleSelectionSort: () => void;
   isSorting: boolean; // Added isSorting prop
+  delay:number; // Added isSorting
+  setDelay: React.Dispatch<React.SetStateAction<number>> // Added isSorting prop
+
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -18,6 +21,8 @@ const Navbar: React.FC<NavbarProps> = ({
   handleInsertionSort,
   handleSelectionSort,
   isSorting, // Destructure isSorting
+  delay,
+  setDelay // Added setDelay prop
 }) => {
   const [currentValue, setCurrentValue] = useState<number>(10);
 
@@ -30,11 +35,12 @@ const Navbar: React.FC<NavbarProps> = ({
       >
         <p>Generate New Array</p>
       </Button>
+      <div className='text-white '>Change Size</div>
       <Slider
-        defaultValue={[5]}
+        defaultValue={[delay]}
         max={65}
         step={1}
-        className='w-[30%]'
+        className='w-[10%]'
         onValueChange={(newValue) => {
           setCurrentValue(newValue[0]);
           if (!isSorting) { // Only generate a new array if not sorting
@@ -42,6 +48,20 @@ const Navbar: React.FC<NavbarProps> = ({
           }
         }}
       />
+      <div className='text-white '>Change Speed</div>
+      {/* controls delay slider below */}
+      <Slider className='w-[10%]'                 
+        min={10}
+        max={1000}
+        defaultValue={[10]}
+        step={10}
+        onValueChange={(newValue) =>{
+          console.log(newValue);
+          setDelay(newValue[0]);
+        } }
+        />
+
+
       <Button
         onClick={handleMergeSort}
         className='button'
