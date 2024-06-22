@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Slider } from "@/components/ui/slider";
-import { Button } from './ui/button';
+import React from 'react';
+import {Slider} from '@/components/ui/slider'; // Adjust path as needed
+import { Button } from './ui/button'; // Adjust path as needed
 
 interface NavbarProps {
   generateNewArray: (value: number) => void;
@@ -8,10 +8,10 @@ interface NavbarProps {
   handleBubbleSort: () => void;
   handleInsertionSort: () => void;
   handleSelectionSort: () => void;
-  isSorting: boolean; // Added isSorting prop
-  delay:number; // Added isSorting
-  setDelay: React.Dispatch<React.SetStateAction<number>> // Added isSorting prop
-
+  isSorting: boolean;
+  delay: number;
+  setDelay: React.Dispatch<React.SetStateAction<number>>;
+  stopSorting: () => void; // Function to stop sorting
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -20,75 +20,61 @@ const Navbar: React.FC<NavbarProps> = ({
   handleBubbleSort,
   handleInsertionSort,
   handleSelectionSort,
-  isSorting, // Destructure isSorting
+  isSorting,
   delay,
-  setDelay // Added setDelay prop
+  setDelay,
+  stopSorting,
 }) => {
-  const [currentValue, setCurrentValue] = useState<number>(10);
-
   return (
-    <div className='flex items-center justify-around h-11'>
+    <div className="flex items-center justify-around h-11">
       <Button
-        onClick={() => generateNewArray(currentValue)}
-        className='button'
-        disabled={isSorting} // Disable button if sorting
+        onClick={() => generateNewArray(50)}
+        className="button"
+        disabled={isSorting}
       >
         <p>Generate New Array</p>
       </Button>
-      <div className='text-white '>Change Size</div>
+      <div className="text-white">Change Size</div>
       <Slider
-        defaultValue={[delay]}
-        max={65}
+        defaultValue={[50]}
+        max={100}
         step={1}
-        className='w-[10%]'
+        className="w-[10%]"
         onValueChange={(newValue) => {
-          setCurrentValue(newValue[0]);
-          if (!isSorting) { // Only generate a new array if not sorting
+          if (!isSorting) {
             generateNewArray(newValue[0]);
           }
         }}
       />
-      <div className='text-white '>Change Speed</div>
-      {/* controls delay slider below */}
-      <Slider className='w-[10%]'                 
+      <div className="text-white">Change Speed</div>
+      <Slider
+        className="w-[10%]"
         min={10}
         max={1000}
-        defaultValue={[10]}
+        defaultValue={[delay]}
         step={10}
-        onValueChange={(newValue) =>{
-          console.log(newValue);
+        onValueChange={(newValue) => {
           setDelay(newValue[0]);
-        } }
-        />
-
-
-      <Button
-        onClick={handleMergeSort}
-        className='button'
-        disabled={isSorting} // Disable button if sorting
-      >
+        }}
+      />
+      <Button onClick={handleMergeSort} className="button" disabled={isSorting}>
         <p>Merge Sort</p>
       </Button>
-      <Button
-        onClick={handleBubbleSort}
-        className='button'
-        disabled={isSorting} // Disable button if sorting
-      >
+      <Button onClick={handleBubbleSort} className="button" disabled={isSorting}>
         <p>Bubble Sort</p>
       </Button>
-      <Button
-        onClick={handleInsertionSort}
-        className='button'
-        disabled={isSorting} // Disable button if sorting
-      >
+      <Button onClick={handleInsertionSort} className="button" disabled={isSorting}>
         <p>Insertion Sort</p>
       </Button>
       <Button
         onClick={handleSelectionSort}
-        className='button'
-        disabled={isSorting} // Disable button if sorting
+        className="button"
+        disabled={isSorting}
       >
         <p>Selection Sort</p>
+      </Button>
+      <Button onClick={stopSorting} className="button" disabled={!isSorting}>
+        <p>Stop Sorting</p>
       </Button>
     </div>
   );

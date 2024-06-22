@@ -14,8 +14,8 @@ const generateRandomArray = (size: number): number[] => {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 87) + 4);
 };
 
-const sleep = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (getDelay: () => number) => {
+  return new Promise((resolve) => setTimeout(resolve, getDelay()));
 };
 
 // In-place merge function
@@ -24,7 +24,7 @@ const mergeInPlace = async (
   leftStart: number,
   leftEnd: number,
   rightEnd: number,
-  delay: number,
+  getDelay: () => number,
   updateArray: (array: number[], start: number | null, end: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ) => {
@@ -51,7 +51,9 @@ const mergeInPlace = async (
     }
 
     updateArray([...array], left, right, new Set());
-    await sleep(delay);
+    const num=getDelay()
+    console.log(num)
+    await sleep(getDelay);
   }
 };
 
@@ -60,7 +62,7 @@ const mergeSortInPlace = async (
   array: number[],
   start: number,
   end: number,
-  delay: number,
+  getDelay: () => number,
   updateArray: (array: number[], start: number | null, end: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ) => {
@@ -69,9 +71,9 @@ const mergeSortInPlace = async (
   }
 
   const mid = Math.floor((start + end) / 2);
-  await mergeSortInPlace(array, start, mid, delay, updateArray, isCancelledRef);
-  await mergeSortInPlace(array, mid + 1, end, delay, updateArray, isCancelledRef);
-  await mergeInPlace(array, start, mid, end, delay, updateArray, isCancelledRef);
+  await mergeSortInPlace(array, start, mid, getDelay, updateArray, isCancelledRef);
+  await mergeSortInPlace(array, mid + 1, end, getDelay, updateArray, isCancelledRef);
+  await mergeInPlace(array, start, mid, end, getDelay, updateArray, isCancelledRef);
 
   // After merge is complete, mark the sorted portion of the array
   if (start === 0 && end === array.length - 1) {
@@ -83,7 +85,7 @@ const mergeSortInPlace = async (
 
 const bubbleSort = async (
   array: number[],
-  delay: number,
+  getDelay: () => number,
   updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ): Promise<number[]> => {
@@ -99,7 +101,7 @@ const bubbleSort = async (
         [array[j], array[j + 1]] = [array[j + 1], array[j]];
 
         updateArray([...array], j, j + 1, sortedIndices);
-        await sleep(delay);
+        await sleep(getDelay);
       }
     }
     sortedIndices.add(array.length - i - 1);
@@ -110,7 +112,7 @@ const bubbleSort = async (
 
 const insertionSort = async (
   array: number[],
-  delay: number,
+  getDelay: () => number,
   updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ): Promise<number[]> => {
@@ -127,7 +129,7 @@ const insertionSort = async (
 
       array[j + 1] = array[j];
       updateArray([...array], j, j + 1, sortedIndices);
-      await sleep(delay);
+      await sleep(getDelay);
       j = j - 1;
     }
     array[j + 1] = key;
@@ -144,7 +146,7 @@ const insertionSort = async (
 
 const selectionSort = async (
   array: number[],
-  delay: number,
+  getDelay: () => number,
   updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
   isCancelledRef: React.MutableRefObject<boolean>
 ): Promise<number[]> => {
@@ -162,13 +164,13 @@ const selectionSort = async (
         minIndex = j;
       }
       updateArray([...array], minIndex, j, sortedIndices);
-      await sleep(delay);
+      await sleep(getDelay);
     }
 
     if (minIndex !== i) {
       [array[i], array[minIndex]] = [array[minIndex], array[i]];
       updateArray([...array], i, minIndex, sortedIndices);
-      await sleep(delay);
+      await sleep(getDelay);
     }
     sortedIndices.add(i);
   }
@@ -199,6 +201,8 @@ export default function Home() {
     setSortedIndices(new Set(sortedIndices));
   };
 
+  const getDelay = () => delay;
+
   const generateNewArray = (size: number) => {
     if (isSorting) return; // Prevent generating new array during sorting
     isCancelledRef.current = true; // Cancel ongoing sort
@@ -208,13 +212,17 @@ export default function Home() {
     setIndex2(null);
     setSortedIndices(new Set());
   };
+  const stopSorting = () => {
+    isCancelledRef.current = true;
+    setIsSorting(false);
+  };
 
   const handleMergeSort = async () => {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting merge sort
     const newArray = [...array];
-    await mergeSortInPlace(newArray, 0, newArray.length - 1, delay, updateArray, isCancelledRef);
+    await mergeSortInPlace(newArray, 0, newArray.length - 1, getDelay, updateArray, isCancelledRef);
     updateArray(newArray, null, null, new Set(newArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -223,7 +231,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting bubble sort
-    const sortedArray = await bubbleSort([...array], delay, updateArray, isCancelledRef);
+    const sortedArray = await bubbleSort([...array], getDelay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -232,7 +240,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting insertion sort
-    const sortedArray = await insertionSort([...array], delay, updateArray, isCancelledRef);
+    const sortedArray = await insertionSort([...array], getDelay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -241,7 +249,7 @@ export default function Home() {
     if (isSorting) return; // Prevent starting another sort
     setIsSorting(true); // Set sorting flag
     isCancelledRef.current = false; // Reset cancellation flag before starting selection sort
-    const sortedArray = await selectionSort([...array], delay, updateArray, isCancelledRef);
+    const sortedArray = await selectionSort([...array], getDelay, updateArray, isCancelledRef);
     updateArray(sortedArray, null, null, new Set(sortedArray.keys()));
     setIsSorting(false); // Reset sorting flag after completion
   };
@@ -257,6 +265,7 @@ export default function Home() {
         isSorting={isSorting} // Pass the sorting state to Navbar
         delay={delay}
         setDelay={setDelay}
+        stopSorting={stopSorting}
       />
       <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
     </div>
