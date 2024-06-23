@@ -8,6 +8,7 @@ interface NavbarProps {
   handleBubbleSort: () => void;
   handleInsertionSort: () => void;
   handleSelectionSort: () => void;
+  handleHeapSort: () => void;
   isSorting: boolean;
   delay: number;
   setDelay: React.Dispatch<React.SetStateAction<number>>;
@@ -20,6 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({
   handleBubbleSort,
   handleInsertionSort,
   handleSelectionSort,
+  handleHeapSort,
   isSorting,
   delay,
   setDelay,
@@ -44,7 +46,9 @@ const Navbar: React.FC<NavbarProps> = ({
           if (!isSorting) {
             generateNewArray(newValue[0]);
           }
+
         }}
+        disabled={isSorting}
       />
       <div className="text-white">Change Speed</div>
       <Slider
@@ -56,6 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({
         onValueChange={(newValue) => {
           setDelay(newValue[0]);
         }}
+        disabled={isSorting}
       />
       <Button onClick={handleMergeSort} className="button" disabled={isSorting}>
         <p>Merge Sort</p>
@@ -72,6 +77,9 @@ const Navbar: React.FC<NavbarProps> = ({
         disabled={isSorting}
       >
         <p>Selection Sort</p>
+      </Button>
+      <Button onClick={handleHeapSort} className="button" disabled={isSorting}>
+        <p>Heapsort</p>
       </Button>
       <Button onClick={stopSorting} className="button" disabled={!isSorting}>
         <p>Stop Sorting</p>

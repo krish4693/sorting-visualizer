@@ -51,7 +51,7 @@ const mergeInPlace = async (
     }
 
     updateArray([...array], left, right, new Set());
-    const num=getDelay()
+    const num = getDelay()
     console.log(num)
     await sleep(getDelay);
   }
@@ -180,6 +180,61 @@ const selectionSort = async (
   return array;
 };
 
+const heapSort = async (
+  array: number[],
+  getDelay: () => number,
+  updateArray: (array: number[], index1: number | null, index2: number | null, sortedIndices: Set<number>) => void,
+  isCancelledRef: React.MutableRefObject<boolean>
+): Promise<number[]> => {
+  const sortedIndices = new Set<number>();
+
+  const heapify = async (n: number, i: number) => {
+    let largest = i;
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+
+    if (left < n && array[left] > array[largest]) {
+      largest = left;
+    }
+
+    if (right < n && array[right] > array[largest]) {
+      largest = right;
+    }
+
+    if (largest !== i) {
+      [array[i], array[largest]] = [array[largest], array[i]];
+      updateArray([...array], i, largest, sortedIndices);
+      await sleep(getDelay);
+      await heapify(n, largest);
+    }
+  };
+
+  for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
+    if (isCancelledRef.current) {
+      return array;
+    }
+    await heapify(array.length, i);
+  }
+
+  for (let i = array.length - 1; i > 0; i--) {
+    if (isCancelledRef.current) {
+      return array;
+    }
+
+    [array[0], array[i]] = [array[i], array[0]];
+    sortedIndices.add(i);
+    updateArray([...array], 0, i, sortedIndices);
+    await sleep(getDelay);
+
+    await heapify(i, 0);
+  }
+
+  sortedIndices.add(0);
+  updateArray([...array], null, null, sortedIndices);
+  return array;
+};
+
+
 export default function Home() {
   const [array, setArray] = useState<number[]>([]);
   const [index1, setIndex1] = useState<number | null>(null);
@@ -254,6 +309,13 @@ export default function Home() {
     setIsSorting(false); // Reset sorting flag after completion
   };
 
+  const handleHeapSort = async () => {
+    isCancelledRef.current = false;
+    setIsSorting(true);
+    await heapSort(array, getDelay, updateArray, isCancelledRef);
+    setIsSorting(false);
+  };
+
   return (
     <div className={dottedmatrix.className}>
       <Navbar
@@ -262,6 +324,7 @@ export default function Home() {
         handleBubbleSort={handleBubbleSort}
         handleInsertionSort={handleInsertionSort}
         handleSelectionSort={handleSelectionSort}
+        handleHeapSort={handleHeapSort}
         isSorting={isSorting} // Pass the sorting state to Navbar
         delay={delay}
         setDelay={setDelay}
