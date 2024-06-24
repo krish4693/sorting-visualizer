@@ -51,8 +51,6 @@ const mergeInPlace = async (
     }
 
     updateArray([...array], left, right, new Set());
-    const num = getDelay()
-    console.log(num)
     await sleep(getDelay);
   }
 };
@@ -234,7 +232,6 @@ const heapSort = async (
   return array;
 };
 
-
 export default function Home() {
   const [array, setArray] = useState<number[]>([]);
   const [index1, setIndex1] = useState<number | null>(null);
@@ -320,20 +317,25 @@ export default function Home() {
 
   return (
     <div className={dottedmatrix.className}>
-      <Navbar
-        generateNewArray={generateNewArray}
-        handleMergeSort={handleMergeSort}
-        handleBubbleSort={handleBubbleSort}
-        handleInsertionSort={handleInsertionSort}
-        handleSelectionSort={handleSelectionSort}
-        handleHeapSort={handleHeapSort}
-        isSorting={isSorting} // Pass the sorting state to Navbar
-        delay={delay}
-        size={size}
-        setDelay={setDelay}
-        stopSorting={stopSorting}
-      />
-      <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
+      <div className="hidden md:block">
+        <Navbar
+          generateNewArray={generateNewArray}
+          handleMergeSort={handleMergeSort}
+          handleBubbleSort={handleBubbleSort}
+          handleInsertionSort={handleInsertionSort}
+          handleSelectionSort={handleSelectionSort}
+          handleHeapSort={handleHeapSort}
+          isSorting={isSorting} // Pass the sorting state to Navbar
+          delay={delay}
+          size={size}
+          setDelay={setDelay}
+          stopSorting={stopSorting}
+        />
+        <Visualizer array={array} index1={index1} index2={index2} sortedIndices={sortedIndices} />
+      </div>
+      <div className="block md:hidden text-center mt-20 text-xl text-red-500">
+        This website is not available in phone view yet.
+      </div>
     </div>
   );
 }
