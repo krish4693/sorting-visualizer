@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sorting Visualizer
 
-## Getting Started
+Sorting Visualizer is a web application built with Next.js that provides a visual representation of various sorting algorithms. It includes features to generate new arrays, adjust array size, and control the sorting speed.
 
-First, run the development server:
+## Table of Contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+- Generate new arrays of random values
+- Visualize sorting algorithms: Merge Sort, Bubble Sort, Insertion Sort, Selection Sort
+- Adjust array size with a slider
+- Control sorting speed with a slider
+- Disable controls during sorting to prevent interruptions
+
+## Screenshots
+
+![Home Page](public/screenshots/home-page.png)
+
+![Array Generation](screenshots/array-generation.png)
+
+![Sorting Visualization](screenshots/sorting-visualization.png)
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/sorting-visualizer.git
+cd sorting-visualizer
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open your browser and navigate to `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Generate New Array
 
-## Learn More
+1. Use the "Generate New Array" button to create a new array of random values.
+2. Adjust the size of the array using the "Change Size" slider.
 
-To learn more about Next.js, take a look at the following resources:
+### Adjust Sorting Speed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Use the "Change Speed" slider to control the speed of the sorting visualization.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Start Sorting
 
-## Deploy on Vercel
+1. Click on one of the sorting algorithm buttons (Merge Sort, Bubble Sort, Insertion Sort, Selection Sort) to start the sorting process.
+2. The controls will be disabled during sorting to prevent any interruptions.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Navbar Component
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The `Navbar` component in this application controls various interactive elements, including array generation and sorting algorithm selection. The component accepts several props, such as `generateNewArray`, `handleMergeSort`, `handleBubbleSort`, `handleInsertionSort`, `handleSelectionSort`, `isSorting`, `delay`, and `setDelay`.
+
+### Example
+
+Here is an example of how the `Navbar` component is used in the `Home` component:
+
+```javascript
+import React, { useState } from 'react';
+import Navbar from './Navbar';
+
+const Home = () => {
+  const [array, setArray] = useState<number[]>([]);
+  const [isSorting, setIsSorting] = useState<boolean>(false);
+  const [delay, setDelay] = useState<number>(10);
+
+  const generateNewArray = (size: number) => {
+    const newArray = Array.from({ length: size }, () => Math.floor(Math.random() * 100));
+    setArray(newArray);
+  };
+
+  const handleMergeSort = () => { /* Merge sort logic */ };
+  const handleBubbleSort = () => { /* Bubble sort logic */ };
+  const handleInsertionSort = () => { /* Insertion sort logic */ };
+  const handleSelectionSort = () => { /* Selection sort logic */ };
+
+  return (
+    <div>
+      <Navbar
+        generateNewArray={generateNewArray}
+        handleMergeSort={handleMergeSort}
+        handleBubbleSort={handleBubbleSort}
+        handleInsertionSort={handleInsertionSort}
+        handleSelectionSort={handleSelectionSort}
+        isSorting={isSorting}
+        setIsSorting={setIsSorting}
+        delay={delay}
+        setDelay={setDelay}
+      />
+      {/* Other components or UI elements */}
+    </div>
+  );
+};
+
+export default Home;
+```
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature/your-feature`).
+6. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+Feel free to replace the placeholder text and file paths with actual information relevant to your project.
