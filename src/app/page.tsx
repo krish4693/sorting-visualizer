@@ -243,6 +243,7 @@ export default function Home() {
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const isCancelledRef = useRef<boolean>(false);
   const [delay, setDelay] = useState<number>(10);
+  const [size, setSize] = useState<number>(50);
 
   useEffect(() => {
     const newArray = generateRandomArray(50); // Initial array size
@@ -262,6 +263,7 @@ export default function Home() {
     if (isSorting) return; // Prevent generating new array during sorting
     isCancelledRef.current = true; // Cancel ongoing sort
     const newArray = generateRandomArray(size);
+    setSize(size);
     setArray(newArray);
     setIndex1(null);
     setIndex2(null);
@@ -327,6 +329,7 @@ export default function Home() {
         handleHeapSort={handleHeapSort}
         isSorting={isSorting} // Pass the sorting state to Navbar
         delay={delay}
+        size={size}
         setDelay={setDelay}
         stopSorting={stopSorting}
       />

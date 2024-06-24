@@ -11,6 +11,7 @@ interface NavbarProps {
   handleHeapSort: () => void;
   isSorting: boolean;
   delay: number;
+  size:number;
   setDelay: React.Dispatch<React.SetStateAction<number>>;
   stopSorting: () => void; // Function to stop sorting
 }
@@ -24,13 +25,14 @@ const Navbar: React.FC<NavbarProps> = ({
   handleHeapSort,
   isSorting,
   delay,
+  size,
   setDelay,
   stopSorting,
 }) => {
   return (
     <div className="flex items-center justify-around h-11">
       <Button
-        onClick={() => generateNewArray(50)}
+        onClick={() => generateNewArray(size)}
         className="button"
         disabled={isSorting}
       >
