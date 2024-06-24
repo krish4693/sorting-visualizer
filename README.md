@@ -5,7 +5,6 @@ Sorting Visualizer is a web application built with Next.js that provides a visua
 ## Table of Contents
 
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -19,13 +18,9 @@ Sorting Visualizer is a web application built with Next.js that provides a visua
 - Control sorting speed with a slider
 - Disable controls during sorting to prevent interruptions
 
-## Screenshots
-
 ![Home Page](public/screenshots/home-page.png)
 
-![Array Generation](screenshots/array-generation.png)
 
-![Sorting Visualization](screenshots/sorting-visualization.png)
 
 ## Installation
 
